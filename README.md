@@ -50,16 +50,12 @@ A framework mod for <a href="http://www.derailvalley.com/">Derail Valley</a> tha
 
 ### Setup
 
-Download the API archive, install it using UnityModManager Installer, and add a reference in your project file.
+Download the API archive, install it using UnityModManager Installer, and add these references to your project file.
 
 ```xml
 <Reference Include="MessageBox"/>
-```
-
-To use the method overloads that return a Promise, you'll also need to reference the RSG.Promise package.
-
-```xml
-<PackageReference Include="RSG.Promise" Version="3.0.1"/>
+<Reference Include="RSG.Promise"/>
+<!-- RSG.Promise is only needed if using method overloads that return a Promise -->
 ```
 
 You'll likely need to add a reference path to `Directory.Build.targets` to tell the compiler where the API assembly is. Adjust it to match your Derail Valley install directory.
@@ -110,7 +106,7 @@ PopupAPI.ShowYesNo(
 	}
 );
 
-// Using the Promise class
+// Using the Promise return value
 PopupAPI.ShowYesNo(
 	message: "Is Niko a cute fox?"
 ).Then((result) => {
@@ -129,7 +125,7 @@ PopupAPI.ShowYesNo(
 });
 ```
 
-There's an obvious advantage to using the Promise class, as it prevents deep indentation of code, even for long chains of actions.
+There's an obvious advantage to using the method overloads that return a Promise object, as doing so prevents deep indentation of code, even for long chains of actions.
 
 
 
