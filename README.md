@@ -11,12 +11,12 @@
 <div align="center">
 	<h1>Unity Mod Manager Mod Template</h1>
 	<p>
-		A template for creating <a href="http://www.derailvalley.com/">Derail Valley</a> mods that load via <a href="https://www.nexusmods.com/site/mods/21">Unity Mod Manager</a>.
+		A framework mod for <a href="http://www.derailvalley.com/">Derail Valley</a> that enables other mods to more easily show messages and get player responses.
 		<br />
 		<br />
-		<a href="https://github.com/derail-valley-modding/template-umm/issues">Report Bug</a>
+		<a href="https://github.com/fauxnik/dv-message-box/issues">Report Bug</a>
 		·
-		<a href="https://github.com/derail-valley-modding/template-umm/issues">Request Feature</a>
+		<a href="https://github.com/fauxnik/dv-message-box/issues">Request Feature</a>
 	</p>
 </div>
 
@@ -41,8 +41,95 @@
 
 ## About The Project
 
-This is a template for Derail Valley mods that load via the Unity Mod Manager mod loader.  
-TODO: Instructions for how mod creators use this template.
+A framework mod for <a href="http://www.derailvalley.com/">Derail Valley</a> that enables other mods to show messages and get player responses more easily.
+
+
+
+
+## How To Use
+
+### Setup
+
+Download the API archive, install it using UnityModManager Installer, and add a reference in your project file.
+
+```xml
+<Reference Include="MessageBox"/>
+```
+
+To use the method overloads that return a Promise, you'll also need to reference the RSG.Promise package.
+
+```xml
+<PackageReference Include="RSG.Promise" Version="3.0.1"/>
+```
+
+You'll likely need to add a reference path to `Directory.Build.targets` to tell the compiler where the API assembly is. Adjust it to match your Derail Valley install directory.
+
+```
+C:\Program Files (x86)\Steam\steamapps\common\Derail Valley\Mods\MessageBox\
+```
+
+### Showing a Popup
+
+Showing a popup can be achieved by simply providing a message string to one of the provided static methods.
+
+```csharp
+using MessageBox;
+
+PopupAPI.ShowOk("Hello, world!");
+```
+
+The text of the popup's buttons can also be changed. The argument names correspond to the `PopupClosedByAction` enum values, but they can be interpretted in any way the consuming mod requires.
+
+```csharp
+using MessageBox;
+
+PopupAPI.Show3Buttons(
+	title: "Guessing Game",
+	message: $"Is your number {guess}?",
+	positive: "Yes",
+	negative: "No, higher",
+	abort: "No, lower"
+);
+```
+
+### Chaining Actions
+
+Code can be staged to run after the popup is closed. This allows the mod to respond based on the user's selection. There are two ways of chaining actions.
+
+```csharp
+using MessageBox;
+
+// Using the onClose callback
+PopupAPI.ShowYesNo(
+	message: "Exit?",
+	onClose: (result) => {
+		if (result.closedBy == PopupClosedByAction.Positive)
+		{
+			doQuit();
+		}
+	}
+);
+
+// Using the Promise class
+PopupAPI.ShowYesNo(
+	message: "Is Niko a cute fox?"
+).Then((result) => {
+	if (result.closedBy == PopupClosedByAction.Positive)
+	{
+		return PopupAPI.ShowOk("You chose correctly!");
+	}
+	return PopupAPI.ShowOk("Better luck next time.");
+}).Then((_) => {
+	return PopupAPI.ShowYesNo("Play again?");
+}).Then((result) => {
+	if (result.closedBy == PopupClosedByAction.Positive)
+	{
+		StartGame();
+	}
+});
+```
+
+There's an obvious advantage to using the Promise class, as it prevents deep indentation of code, even for long chains of actions.
 
 
 
@@ -55,7 +142,7 @@ Building the project requires some initial setup, after which running `dotnet bu
 
 ### References Setup
 
-After cloning the repository, some setup is required in order to successfully build the mod DLLs. You will need to create a new [Directory.Build.targets][references-url] file to specify your local reference paths. This file will be located in the main directory, next to MOD_NAME.sln.
+After cloning the repository, some setup is required in order to successfully build the mod DLLs. You will need to create a new [Directory.Build.targets][references-url] file to specify your local reference paths. This file will be located in the main directory, next to MessageBox.sln.
 
 Below is an example of the necessary structure. When creating your targets file, you will need to replace the reference paths with the corresponding folders on your system. Make sure to include semicolons **between** each of the paths and no semicolon after the last path. Also note that any shortcuts you might use in file explorer—such as %ProgramFiles%—won't be expanded in these paths. You have to use full, absolute paths.
 ```xml
@@ -115,15 +202,15 @@ See [LICENSE][license-url] for more information.
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
-[contributors-shield]: https://img.shields.io/github/contributors/derail-valley-modding/template-umm.svg?style=for-the-badge
-[contributors-url]: https://github.com/derail-valley-modding/template-umm/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/derail-valley-modding/template-umm.svg?style=for-the-badge
-[forks-url]: https://github.com/derail-valley-modding/template-umm/network/members
-[stars-shield]: https://img.shields.io/github/stars/derail-valley-modding/template-umm.svg?style=for-the-badge
-[stars-url]: https://github.com/derail-valley-modding/template-umm/stargazers
-[issues-shield]: https://img.shields.io/github/issues/derail-valley-modding/template-umm.svg?style=for-the-badge
-[issues-url]: https://github.com/derail-valley-modding/template-umm/issues
-[license-shield]: https://img.shields.io/github/license/derail-valley-modding/template-umm.svg?style=for-the-badge
-[license-url]: https://github.com/derail-valley-modding/template-umm/blob/main/LICENSE
+[contributors-shield]: https://img.shields.io/github/contributors/fauxnik/dv-message-box.svg?style=for-the-badge
+[contributors-url]: https://github.com/fauxnik/dv-message-box/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/fauxnik/dv-message-box.svg?style=for-the-badge
+[forks-url]: https://github.com/fauxnik/dv-message-box/network/members
+[stars-shield]: https://img.shields.io/github/stars/fauxnik/dv-message-box.svg?style=for-the-badge
+[stars-url]: https://github.com/fauxnik/dv-message-box/stargazers
+[issues-shield]: https://img.shields.io/github/issues/fauxnik/dv-message-box.svg?style=for-the-badge
+[issues-url]: https://github.com/fauxnik/dv-message-box/issues
+[license-shield]: https://img.shields.io/github/license/fauxnik/dv-message-box.svg?style=for-the-badge
+[license-url]: https://github.com/fauxnik/dv-message-box/blob/main/LICENSE
 [references-url]: https://learn.microsoft.com/en-us/visualstudio/msbuild/customize-your-build?view=vs-2022
 [autocrlf-url]: https://www.git-scm.com/book/en/v2/Customizing-Git-Git-Configuration#_formatting_and_whitespace

@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<AssemblyName>MOD_NAME</AssemblyName>
+		<AssemblyName>MessageBox</AssemblyName>
 		<TargetFramework>net48</TargetFramework>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
@@ -10,6 +10,9 @@
 	<!-- Derail Valley -->
 	<ItemGroup>
 		<Reference Include="Assembly-CSharp"/>
+		<Reference Include="DV.UI"/>
+		<Reference Include="DV.UIFramework"/>
+		<Reference Include="DV.Utils"/>
 	</ItemGroup>
 
 	<!-- Unity -->
@@ -21,6 +24,11 @@
 	<!-- Mod Loader -->
 	<ItemGroup>
 		<PackageReference Include="UnityModManager" Version="0.27.2"/>
+	</ItemGroup>
+
+	<!-- NuGet Packages -->
+	<ItemGroup>
+		<PackageReference Include="RSG.Promise" Version="3.0.1"/>
 	</ItemGroup>
 
 	<!-- Null Checking -->
